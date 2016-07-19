@@ -1,9 +1,10 @@
 import unittest
-from saltnanny.salt_nanny import SaltNanny
 from mock import MagicMock
 from mock import call
 from mock import patch
 from fakeredis import FakeRedis
+
+from saltnanny import SaltNanny
 
 
 class SaltNannyTest(unittest.TestCase):

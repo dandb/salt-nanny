@@ -2,7 +2,7 @@ import unittest
 from mock import patch
 from fakeredis import FakeRedis
 
-from saltnanny.salt_nanny_client import SaltRedisClient
+from saltnanny import SaltRedisClient
 
 
 class SaltNannyClientTest(unittest.TestCase):
