@@ -1,7 +1,7 @@
 import unittest
 from mock import patch
 
-from saltnanny.salt_nanny_client import SaltNannyClientFactory
+from saltnanny import SaltNannyClientFactory
 
 
 class SaltNannyClientFactoryTest(unittest.TestCase):

@@ -2,8 +2,8 @@ import unittest
 from mock import patch
 from fakeredis import FakeRedis
 
-from saltnanny.salt_return_parser import SaltReturnParser
-from saltnanny.salt_nanny_client import SaltRedisClient
+from saltnanny import SaltReturnParser
+from saltnanny import SaltRedisClient
 
 
 class SaltReturnParserTest(unittest.TestCase):
