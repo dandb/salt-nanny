@@ -49,6 +49,28 @@ class SaltNannyTest(unittest.TestCase):
         salt_nanny.track_returns()
 
     @patch('redis.Redis')
+    def test_track_custom_event_failures(self, mock_redis):
+        fake_redis = FakeRedis()
+        fake_redis.set('custom_event_type', '["Random Event Log", "Success"]')
+        # Create and initialize Salt Nanny
+        salt_nanny = SaltNanny(self.cache_config)
+        salt_nanny.cache_client.redis_instance = fake_redis
+        salt_nanny.min_interval = 1
+        return_code = salt_nanny.track_custom_event_failures('custom_event_type', ['Failure'], 2)
+        self.assertTrue(return_code == 0)
+
+    @patch('redis.Redis')
+    def test_track_custom_event_failures(self, mock_redis):
+        fake_redis = FakeRedis()
+        fake_redis.set('custom_event_type', '["Random Event Log", "Failure"]')
+        # Create and initialize Salt Nanny
+        salt_nanny = SaltNanny(self.cache_config)
+        salt_nanny.cache_client.redis_instance = fake_redis
+        salt_nanny.min_interval = 1
+        return_code = salt_nanny.track_custom_event_failures('custom_event_type', ['Failure'], 2)
+        self.assertTrue(return_code > 0)
+
+    @patch('redis.Redis')
     def test_get_wait_time(self, mock_redis):
         cache_client = MagicMock()
         salt_nanny = SaltNanny(self.cache_config)
