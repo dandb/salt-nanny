@@ -26,6 +26,8 @@ class SaltNannyClient:
     def get_value_by_key(self, base_key):
         raise NotImplementedError
 
+    def exists(self, base_key):
+        raise NotImplementedError
 
 class SaltRedisClient(SaltNannyClient):
 
@@ -43,9 +45,9 @@ class SaltRedisClient(SaltNannyClient):
         cache_key = '{0}:{1}'.format(minion, fun)
         latest_jid = '0'
         try:
-            if (self.redis_instance.type(cache_key) == 'list'):
+            if self.redis_instance.type(cache_key) == 'list':
                 latest_jid = self.redis_instance.lindex(cache_key, 0)
-            elif (self.redis_instance.type(cache_key) == 'string'):
+            elif self.redis_instance.type(cache_key) == 'string':
                 latest_jid = self.redis_instance.get(cache_key)
         except KeyError:
             self.log.info('Latest jid not found. Defaulting to 0')
@@ -55,11 +57,11 @@ class SaltRedisClient(SaltNannyClient):
 
     def get_return_by_jid(self, minion, jid):
         cache_key = '{0}:{1}'.format(minion, jid)
-        cache_key_salt_2016 = 'ret:{0}'.format(jid), minion
+        cache_key_salt_2016 = 'ret:{0}'.format(jid)
         if self.redis_instance.exists(cache_key):
             return self.redis_instance.get(cache_key)
         elif self.redis_instance.exists(cache_key_salt_2016):
-            return self.redis_instance.hget(cache_key_salt_2016)
+            return self.redis_instance.hget(cache_key_salt_2016, minion)
         else:
             msg = 'Return info for JID:{0} does not exist'.format(jid)
             self.log.error(msg)
@@ -67,3 +69,6 @@ class SaltRedisClient(SaltNannyClient):
 
     def get_value_by_key(self, base_key):
         return self.redis_instance.get(base_key)
+
+    def exists(self, base_key):
+        return self.redis_instance.exists(base_key)

@@ -30,6 +30,13 @@ class SaltReturnParserTest(unittest.TestCase):
         result_code = self.parser.process_jids({'minion1':'1234'}, 1)
         self.assertTrue(result_code > 0)
 
+    def test_process_jids_failure_invalidresult(self):
+        self.parser.min_interval=1
+        self.parser.max_attempts=2
+        self.parser.cache_client.redis_instance.set('minion1:1234', '{\"return\" : \"The function state.highstate is running as PID 1234\"}')
+        result_code = self.parser.process_jids({'minion1':'1234'}, 1)
+        self.assertTrue(result_code > 0)
+
     def test_process_jids_noresults(self):
         result_code = self.parser.process_jids({}, 1)
         self.assertTrue(result_code == 2)
