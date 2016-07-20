@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 
 import os
+import re
 from setuptools import setup
-from pip.req import parse_requirements
 
 
 def read(file_name):
-    return open(os.path.join(os.path.dirname(__file__), file_name)).read()
+    with open(os.path.join(os.path.dirname(__file__), file_name)) as f:
+        return f.read()
 
 
 def get_required_modules(file_name):
-    modules_with_versions = parse_requirements(file_name, session=False)
-    return [str(module.req) for module in modules_with_versions]
+    module_list = read(file_name).split()
+    return map(lambda x: re.split('==|>=|>|<', x)[0], module_list)
 
 setup(
     name="saltnanny",
-    version="0.1.2",
+    version="0.1.3",
     author="Dun and Bradstreet Inc.",
     author_email="devops@dandb.com",
     description='Python Module that parses salt returns stored in an external job cache and logs output',

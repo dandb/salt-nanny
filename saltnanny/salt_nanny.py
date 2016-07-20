@@ -2,8 +2,9 @@
 
 import logging
 import math
-import time
 import os
+from time import sleep
+
 
 from salt_return_parser import SaltReturnParser
 from salt_nanny_client import SaltNannyClientFactory
@@ -39,10 +40,13 @@ class SaltNanny:
         pending_minion_list = list(self.minion_list)
 
         for i in xrange(0, max_attempts):
-            self.log.info('SaltNanny is checking for minion returns in External Job Cache - Attempt: {0}'.format(i))
             pending_minion_list = [minion for minion in pending_minion_list if minion not in self.completed_minions.keys()]
 
             if pending_minion_list:
+                wait_time = self.get_wait_time(i)
+                self.log.info('Sleeping for {0} seconds...'.format(wait_time))
+                sleep(wait_time)
+                self.log.info('SaltNanny is checking for minion returns in External Job Cache - Attempt: {0}'.format(i))
                 for minion in pending_minion_list:
                     latest_jid = self.cache_client.get_latest_jid(minion, self.fun)
                     if latest_jid == self.initial_jids[minion]:
@@ -51,15 +55,11 @@ class SaltNanny:
                     else:
                         self.log.info('SaltNanny found a New JID for minion:{0} JID:{1}'.format(minion, latest_jid))
                         self.completed_minions[minion] = latest_jid
-                wait_time = self.get_wait_time(i)
-                self.log.info('Sleeping for {0} seconds...'.format(wait_time))
-                time.sleep(wait_time)
             else:
-                self.log.info('Results Retrieved from External Job Cache'.format(minion, latest_jid))
+                self.log.info('Results available in External Job Cache for all minions:{0}'
+                              .format(self.completed_minions.keys()))
                 break
         self.log.info(self.completed_minions)
-
-    def process_returns(self):
         return self.parser.process_jids(self.completed_minions, len(self.minion_list))
 
     def get_wait_time(self, index):
@@ -68,26 +68,29 @@ class SaltNanny:
             return self.max_interval
         return wait_interval
 
-    def track_custom_event_failures(self, event_key, failures, max_attempts):
+    def track_custom_event_failures(self, event_key, failures, max_attempts=17):
         for i in xrange(0, max_attempts):
+            wait_time = self.get_wait_time(i)
+            self.log.info('Sleeping for {0} seconds...'.format(wait_time))
+            sleep(wait_time)
             self.log.info('SaltNanny is checking for Custom Event:{0} in External Job Cache - Attempt: {1}'
                           .format(event_key, i))
             if self.cache_client.exists(event_key):
                 self.log.info('SaltNanny found the Custom Event:{0} in External Job Cache. Checking for failures...')
                 return self.parser.check_custom_event_failure(event_key, failures)
-            else:
-                wait_time = self.get_wait_time(i)
-                self.log.info('Sleeping for {0} seconds...'.format(wait_time))
-                time.sleep(wait_time)
         self.log.info('SaltNanny has timed out waiting for Custom Event:{0}'.format(event_key))
+        return 1
 
     def setup_logging(self, target_log_file):
+        formatter = logging.Formatter(self.log_fmt)
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        self.log.addHandler(console_handler)
+        self.log.setLevel(logging.INFO)
         if target_log_file:
             target = os.path.join(os.getcwd(), 'logs/{0}-{1}.log'.format(target_log_file, self.fun))
+            if not os.path.exists(os.path.dirname(target)):
+                os.makedirs(os.path.dirname(target))
             ch = logging.FileHandler(target)
-        else:
-            ch = logging.StreamHandler()
-        formatter = logging.Formatter(self.log_fmt)
-        ch.setFormatter(formatter)
-        self.log.addHandler(ch)
-        self.log.setLevel(logging.INFO)
+            ch.setFormatter(formatter)
+            self.log.addHandler(ch)

@@ -21,4 +21,4 @@ return_code = salt_nanny.process_returns()
 
 * For the example above, the log file in logs/test-state.highstate.log will contain results of the salt highstate
 * The return code is 0 if all the salt functions for all minions succeded with a return dict containing retcode:0.
-* SaltNanny also checks state results in case of a highstate. If any one state fails, the retcode is 0.
+* SaltNanny also checks state results in case of a highstate. If any one state fails, the retcode is non zero.

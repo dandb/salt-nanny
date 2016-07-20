@@ -72,7 +72,6 @@ class SaltNannyTest(unittest.TestCase):
 
     @patch('redis.Redis')
     def test_get_wait_time(self, mock_redis):
-        cache_client = MagicMock()
         salt_nanny = SaltNanny(self.cache_config)
         self.assertEquals(15, salt_nanny.get_wait_time(0))
         self.assertEquals(30, salt_nanny.get_wait_time(1))
@@ -81,5 +80,5 @@ class SaltNannyTest(unittest.TestCase):
 
     @patch('redis.Redis')
     def test_setup_logging(self, mock_redis):
-        salt_nanny = SaltNanny(self.cache_config)
+        salt_nanny = SaltNanny(self.cache_config, 'test')
         self.assertTrue(salt_nanny.log is not None)

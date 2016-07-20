@@ -31,10 +31,17 @@ class SaltReturnParserTest(unittest.TestCase):
         self.assertTrue(result_code > 0)
 
     def test_process_jids_failure_invalidresult(self):
-        self.parser.min_interval=1
-        self.parser.max_attempts=2
-        self.parser.cache_client.redis_instance.set('minion1:1234', '{\"return\" : \"The function state.highstate is running as PID 1234\"}')
-        result_code = self.parser.process_jids({'minion1':'1234'}, 1)
+        self.parser.min_interval = 1
+        self.parser.max_attempts = 2
+        self.parser.cache_client.redis_instance.set('minion1:1234', '{\"return\" : [\"The function state.highstate is running as PID 1234\"]}')
+        result_code = self.parser.process_jids({'minion1': '1234'}, 1)
+        self.assertTrue(result_code > 0)
+
+    def test_get_return_info(self, ):
+        self.parser.min_interval = 1
+        self.parser.max_attempts = 2
+        self.parser.cache_client.redis_instance.set('minion1:1234', '{\"return\" : [\"The function state.highstate is running as PID 1234\"]}')
+        result_code = self.parser.get_return_info('minion1', '1234')
         self.assertTrue(result_code > 0)
 
     def test_process_jids_noresults(self):
@@ -45,3 +52,13 @@ class SaltReturnParserTest(unittest.TestCase):
         self.parser.cache_client.redis_instance.set('minion1:1234', '{ "retcode": 0, "result": true }')
         result_code = self.parser.process_jids({'minion1': '1234'}, 2)
         self.assertTrue(result_code == 1)
+
+    def test_check_custom_event_failure_failure(self):
+        self.parser.cache_client.redis_instance.set('custom_event', '\"Custom String Return with Failure\"')
+        result_code = self.parser.check_custom_event_failure('custom_event', 'Failure')
+        self.assertTrue(result_code > 0)
+
+    def test_check_custom_event_failure_forlist(self):
+        self.parser.cache_client.redis_instance.set('custom_event', '[\"Custom String Return with Failure\"]')
+        result_code = self.parser.check_custom_event_failure('custom_event', 'Failure')
+        self.assertTrue(result_code > 0)
