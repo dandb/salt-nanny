@@ -2,7 +2,7 @@
 
 import logging
 import json
-import time
+from time import sleep
 from ast import literal_eval
 
 
@@ -35,10 +35,19 @@ class SaltReturnParser:
 
     def check_custom_event_failure(self, cache_key, failures):
         custom_results = literal_eval(self.cache_client.get_value_by_key(cache_key))
-        failures_exist = [True for failure in failures if failure in custom_results]
-        if True in failures_exist:
-            return 1
+        self.log.info('Custom Event Return in Job Cache. Key: {0} Value:{1}'.format(cache_key, custom_results))
+        if isinstance(custom_results, list):
+            for result in custom_results:
+                if self.check_failures(result, failures):
+                    return 1
+        else:
+            return 1 if self.check_failures(custom_results, failures) else 0
         return 0
+
+    @staticmethod
+    def check_failures(result, failures):
+        failures_exist = [True for failure in failures if failure in result]
+        return True in failures_exist
 
     def get_return_info(self, minion, jid, attempt=1):
         self.log.info('Getting return info for Minion:{0} JID:{1}'.format(minion, jid))
@@ -47,11 +56,11 @@ class SaltReturnParser:
         return_dict = json.loads(return_info)
         return_code = return_dict.get('retcode')
 
-        if 'return' in return_dict and return_dict['return'].find(self.fun_running_pattern) > 0 \
-                and attempt < self.max_attempts:
-            time.sleep(self.min_interval)
-            self.log.info('Sleeping for {0} seconds...Waiting for function results in ret:{1}'
+        if self.is_fun_running(return_dict) and attempt < self.max_attempts:
+            self.log.info('Return Info for JID:{0} indicates that the function is still running.'.format(jid))
+            self.log.info('Sleeping for {0} seconds...'
                           .format(self.min_interval, jid))
+            sleep(self.min_interval)
             attempt += 1
             return self.get_return_info(minion, jid, attempt)
 
@@ -69,3 +78,10 @@ class SaltReturnParser:
         except:
             self.log.error('Error finding if there was a failure in the result:\n {0}'.format(result))
             return True
+
+    def is_fun_running(self, return_dict):
+        if 'return' in return_dict and isinstance(return_dict['return'], list):
+            for return_item in return_dict['return']:
+                if self.fun_running_pattern in return_item:
+                    return True
+        return False
