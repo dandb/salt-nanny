@@ -1,3 +1,4 @@
+import os
 import unittest
 from mock import MagicMock
 from mock import call
@@ -47,6 +48,25 @@ class SaltNannyTest(unittest.TestCase):
 
         # Start tracking returns
         salt_nanny.track_returns()
+
+    @patch('redis.Redis')
+    def test_parse_last_return(self, mock_redis):
+        fake_redis = FakeRedis()
+
+        # Create and initialize Salt Nanny
+        salt_nanny = SaltNanny(self.cache_config)
+        salt_nanny.cache_client.redis_instance = fake_redis
+        salt_nanny.initialize(['minion1'])
+        salt_nanny.min_interval = 1
+
+        with open('{0}/resources/highstate.json'.format(os.path.dirname(__file__)), 'r') as f:
+            json = f.read()
+
+        # Make Redis Returns available in fake redis
+        fake_redis.set('minion1:state.highstate', '1234')
+        fake_redis.set('minion1:1234', json)
+
+        self.assertTrue(salt_nanny.parse_last_return() > 0)
 
     @patch('redis.Redis')
     def test_track_custom_event_failures(self, mock_redis):
