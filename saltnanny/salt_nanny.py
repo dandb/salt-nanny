@@ -61,6 +61,13 @@ class SaltNanny:
                 break
         self.log.info(self.completed_minions)
         return self.parser.process_jids(self.completed_minions, len(self.minion_list))
+    
+    def parse_last_return(self):
+        for minion in self.minion_list:
+            latest_jid = self.cache_client.get_latest_jid(minion, self.fun)
+            self.completed_minions[minion] = latest_jid
+        self.log.info(self.completed_minions)
+        return self.parser.process_jids(self.completed_minions, len(self.minion_list))
 
     def get_wait_time(self, index):
         wait_interval = self.min_interval * math.pow(self.multiplier, index)

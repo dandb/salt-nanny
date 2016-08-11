@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 import logging
 import json
 from time import sleep
@@ -74,10 +75,17 @@ class SaltReturnParser:
             possible_failures = ['"result": false', 'Data failed to compile:', 'Pillar failed to render with the following messages:']
             failures = [failure in result for failure in possible_failures]
             self.log.info(failures)
+            if True not in failures:
+                failures = self.check_regex_failure(failures, result)
             return True in failures
         except:
             self.log.error('Error finding if there was a failure in the result:\n {0}'.format(result))
             return True
+
+    def check_regex_failure(self, failures, result):
+        regex_failure = r"Rendering SLS '.*' failed:"
+        failures.append(bool(re.search(regex_failure, result)))
+        return failures
 
     def is_fun_running(self, return_dict):
         if 'return' in return_dict and isinstance(return_dict['return'], list):
