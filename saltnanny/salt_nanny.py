@@ -75,7 +75,7 @@ class SaltNanny:
             return self.max_interval
         return wait_interval
 
-    def track_custom_event_failures(self, event_key, failures, max_attempts=17):
+    def track_custom_event_failures(self, event_key, failures, max_attempts=17, successes=[]):
         for i in xrange(0, max_attempts):
             wait_time = self.get_wait_time(i)
             self.log.info('Sleeping for {0} seconds...'.format(wait_time))
@@ -84,7 +84,7 @@ class SaltNanny:
                           .format(event_key, i))
             if self.cache_client.exists(event_key):
                 self.log.info('SaltNanny found the Custom Event:{0} in External Job Cache. Checking for failures...')
-                return self.parser.check_custom_event_failure(event_key, failures)
+                return self.parser.check_custom_event_failure(event_key, failures, successes)
         self.log.info('SaltNanny has timed out waiting for Custom Event:{0}'.format(event_key))
         return 1
 

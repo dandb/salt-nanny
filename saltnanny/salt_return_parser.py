@@ -34,21 +34,31 @@ class SaltReturnParser:
 
         return return_code_sum
 
-    def check_custom_event_failure(self, cache_key, failures):
+    def check_custom_event_failure(self, cache_key, failures, successes):
         custom_results = literal_eval(self.cache_client.get_value_by_key(cache_key))
         self.log.info('Custom Event Return in Job Cache. Key: {0} Value:{1}'.format(cache_key, custom_results))
         if isinstance(custom_results, list):
             for result in custom_results:
+                if self.check_successes(result, successes):
+                    return 0
                 if self.check_failures(result, failures):
                     return 1
         else:
-            return 1 if self.check_failures(custom_results, failures) else 0
+            if self.check_successes(custom_results, successes):
+                return 0
+            if self.check_failures(custom_results, failures):
+                return 1
         return 0
 
     @staticmethod
     def check_failures(result, failures):
         failures_exist = [True for failure in failures if failure in result]
         return True in failures_exist
+
+    @staticmethod
+    def check_successes(result, successes):
+        successes_exist = [True for success in successes if success in result]
+        return True in successes_exist
 
     def get_return_info(self, minion, jid, attempt=1):
         self.log.info('Getting return info for Minion:{0} JID:{1}'.format(minion, jid))

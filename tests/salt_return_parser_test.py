@@ -55,10 +55,21 @@ class SaltReturnParserTest(unittest.TestCase):
 
     def test_check_custom_event_failure_failure(self):
         self.parser.cache_client.redis_instance.set('custom_event', '\"Custom String Return with Failure\"')
-        result_code = self.parser.check_custom_event_failure('custom_event', 'Failure')
+        result_code = self.parser.check_custom_event_failure('custom_event', 'Failure', '')
         self.assertTrue(result_code > 0)
 
-    def test_check_custom_event_failure_forlist(self):
+    def test_check_custom_event_failure_failure_forlist(self):
         self.parser.cache_client.redis_instance.set('custom_event', '[\"Custom String Return with Failure\"]')
-        result_code = self.parser.check_custom_event_failure('custom_event', 'Failure')
+        result_code = self.parser.check_custom_event_failure('custom_event', 'Failure', '')
         self.assertTrue(result_code > 0)
+
+    def test_check_custom_event_failure_success(self):
+        self.parser.cache_client.redis_instance.set('custom_event', '\"Happy with a success.\"')
+        result_code = self.parser.check_custom_event_failure('custom_event', '', 'success')
+        self.assertTrue(result_code == 0)
+
+
+    def test_check_custom_event_failure_success_forlist(self):
+        self.parser.cache_client.redis_instance.set('custom_event', '[\"Happy with a success.\"]')
+        result_code = self.parser.check_custom_event_failure('custom_event', '', 'success')
+        self.assertTrue(result_code == 0)
