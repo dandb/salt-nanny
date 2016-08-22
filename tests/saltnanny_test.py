@@ -63,8 +63,8 @@ class SaltNannyTest(unittest.TestCase):
             json = f.read()
 
         # Make Redis Returns available in fake redis
-        fake_redis.set('minion1:state.highstate', '1234')
-        fake_redis.set('minion1:1234', json)
+        fake_redis.set('minion1:state.highstate', '6789')
+        fake_redis.set('minion1:6789', json)
 
         self.assertTrue(salt_nanny.parse_last_return() > 0)
 
