@@ -50,13 +50,13 @@ class SaltNanny:
                 for minion in pending_minion_list:
                     latest_jid = self.cache_client.get_latest_jid(minion, self.fun)
                     if latest_jid == self.initial_jids[minion]:
-                        self.log.info('SaltNanny did not find a new JID for minion :{0}'.format(minion))
+                        self.log.info('SaltNanny did not find a new JID for minion: {0}'.format(minion))
                         break
                     else:
-                        self.log.info('SaltNanny found a New JID for minion:{0} JID:{1}'.format(minion, latest_jid))
+                        self.log.info('SaltNanny found a New JID for minion: {0} JID: {1}'.format(minion, latest_jid))
                         self.completed_minions[minion] = latest_jid
             else:
-                self.log.info('Results available in External Job Cache for all minions:{0}'
+                self.log.info('Results available in External Job Cache for all minions: {0}'
                               .format(self.completed_minions.keys()))
                 break
         self.log.info(self.completed_minions)
@@ -80,13 +80,13 @@ class SaltNanny:
             wait_time = self.get_wait_time(i)
             self.log.info('Sleeping for {0} seconds...'.format(wait_time))
             sleep(wait_time)
-            self.log.info('SaltNanny is checking for Custom Event:{0} in External Job Cache - Attempt: {1}'
+            self.log.info('SaltNanny is checking for Custom Event: {0} in External Job Cache - Attempt: {1}'
                           .format(event_key, i))
             if self.cache_client.exists(event_key):
-                self.log.info('SaltNanny found the Custom Event:{0} in External Job Cache. Checking for failures...'
+                self.log.info('SaltNanny found the Custom Event: {0} in External Job Cache. Checking for failures...'
                               .format(event_key))
                 return self.parser.check_custom_event_failure(event_key, failures, successes)
-        self.log.info('SaltNanny has timed out waiting for Custom Event:{0}'.format(event_key))
+        self.log.info('SaltNanny has timed out waiting for Custom Event: {0}'.format(event_key))
         return 1
 
     def setup_logging(self, target_log_file):
