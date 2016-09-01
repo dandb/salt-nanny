@@ -83,7 +83,8 @@ class SaltNanny:
             self.log.info('SaltNanny is checking for Custom Event:{0} in External Job Cache - Attempt: {1}'
                           .format(event_key, i))
             if self.cache_client.exists(event_key):
-                self.log.info('SaltNanny found the Custom Event:{0} in External Job Cache. Checking for failures...')
+                self.log.info('SaltNanny found the Custom Event:{0} in External Job Cache. Checking for failures...'
+                              .format(event_key))
                 return self.parser.check_custom_event_failure(event_key, failures, successes)
         self.log.info('SaltNanny has timed out waiting for Custom Event:{0}'.format(event_key))
         return 1
