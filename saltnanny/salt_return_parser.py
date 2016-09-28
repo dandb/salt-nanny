@@ -36,14 +36,19 @@ class SaltReturnParser:
 
     def check_custom_event_failure(self, cache_key, failures, successes):
         custom_results = literal_eval(self.cache_client.get_value_by_key(cache_key))
-        self.log.info('Custom Event Return in Job Cache. Key: {0} Value:{1}'.format(cache_key, custom_results))
+        self.log.info('Custom Event Return in Job Cache. Key: {0} Value:'.format(cache_key))
         if isinstance(custom_results, list):
+            # Print results on each line if its a list (for example a list of log statements)
+            for result in custom_results:
+                self.log.info(result)
+
             for result in custom_results:
                 if self.check_successes(result, successes):
                     return 0
                 if self.check_failures(result, failures):
                     return 1
         else:
+            self.log.info(custom_results)
             if self.check_successes(custom_results, successes):
                 return 0
             if self.check_failures(custom_results, failures):
