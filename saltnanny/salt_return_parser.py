@@ -20,9 +20,12 @@ class SaltReturnParser:
     def process_jids(self, completed_minions, all_minions_count):
         return_code_sum = 0
         for minion, jid in completed_minions.iteritems():
-            return_info, return_code = self.get_return_info(minion, jid)
-            return_code_sum += return_code
-            self.log.info(json.dumps(return_info, indent=1))
+            try:
+                return_info, return_code = self.get_return_info(minion, jid)
+                return_code_sum += return_code
+                self.log.info(json.dumps(return_info, indent=1))
+            except ValueError as ve:
+                self.log.error('Error retrieving results for Minion:{0}: Exception:{1}'.format(minion, ve))
 
         if not completed_minions:
             self.log.info('No highstates found in Job Cache, setting return_code_sum = 2')
