@@ -2,8 +2,19 @@
 Python Module that parses salt returns stored in redis and logs output 
 
 # Example Usage:
+*Command Line Usage:*
+```
+salt-nanny localhost minion1 minion2
+```
+Look for salt returns in localhost for minions - minion1 & minion2
 
-example.py
+```
+salt-nanny localhost minion1 minion2 -p 6380 -x 20 -I 5 60 2
+```
+This command tells salt-nanny to wait 5, 10, 20, 40 and 60 seconds between each retry initially and then 60s for
+subsequent retries. Attempt 20 times and then give up. Use port 6380 for redis.
+
+*Example Python code:*
 ```
 #!/usr/bin/env python
 import salt.client

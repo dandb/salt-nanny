@@ -34,6 +34,10 @@ class SaltReturnParser:
         if len(completed_minions) != all_minions_count and return_code_sum == 0:
             self.log.info('Highstates available in Job Cache were successful, timed out waiting for others.')
             return_code_sum = 1
+        elif return_code_sum != 0:
+            self.log.info('One or more highstates were not entirely successful. Please investigate.')
+        else:
+            self.log.info('All Highstates completed successfully!')
 
         return return_code_sum
 

@@ -16,7 +16,7 @@ def get_required_modules(file_name):
 
 setup(
     name="saltnanny",
-    version="0.1.5",
+    version="0.1.6",
     author="Dun and Bradstreet Inc.",
     author_email="devops@dandb.com",
     description='Python Module that parses salt returns stored in an external job cache and logs output',
@@ -24,6 +24,7 @@ setup(
     keywords="Salt SaltStack Redis redis_return parse cache external",
     url="https://github.com/dandb/saltnanny",
     packages=['saltnanny'],
+    scripts=['salt-nanny'],
     include_package_data=True,
     cmdclass={},
     install_requires=get_required_modules('requirements.txt'),

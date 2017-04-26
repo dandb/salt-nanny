@@ -25,7 +25,7 @@ class SaltReturnParserTest(unittest.TestCase):
         result_code = self.parser.process_jids({'minion1':'1234'}, 1)
         self.assertTrue(result_code == 0)
 
-    def test_process_jids_failure_invalidresult(self):
+    def test_process_jids_failure_invalidresult_random_error(self):
         self.parser.cache_client.redis_instance.set('minion1:1234', '{ "result" : "random stack trace" }')
         result_code = self.parser.process_jids({'minion1':'1234'}, 1)
         self.assertTrue(result_code > 0)

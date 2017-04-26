@@ -69,7 +69,7 @@ class SaltNannyTest(unittest.TestCase):
         self.assertTrue(salt_nanny.parse_last_return() > 0)
 
     @patch('redis.Redis')
-    def test_track_custom_event_failures(self, mock_redis):
+    def test_track_custom_event_failures_no_failures(self, mock_redis):
         fake_redis = FakeRedis()
         fake_redis.set('custom_event_type', '["Random Event Log", "Success"]')
         # Create and initialize Salt Nanny
