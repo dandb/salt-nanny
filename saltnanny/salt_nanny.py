@@ -102,3 +102,10 @@ class SaltNanny:
             ch = logging.FileHandler(target)
             ch.setFormatter(formatter)
             self.log.addHandler(ch)
+
+
+if __name__ == '__main__':
+    cache_config = {'type': 'redis', 'host': '127.0.0.1', 'port': 6379, 'db': '0'}
+    salt_nanny = SaltNanny(cache_config)
+    salt_nanny.initialize(['minion1'])
+    result = salt_nanny.track_returns(15)

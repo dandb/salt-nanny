@@ -1,0 +1,11 @@
+[report]
+
+exclude_lines =
+    if __name__ == .__main__.:
+    def main..:
+
+omit =
+    custom*
+    setup*
+    tests/*
+    .eggs/*
