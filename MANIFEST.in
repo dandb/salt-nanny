@@ -2,3 +2,4 @@
 include *.txt
 include tests/*.txt
 include README.md
+include CHANGES
