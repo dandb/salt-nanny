@@ -16,7 +16,7 @@ def get_required_modules(file_name):
 
 setup(
     name="saltnanny",
-    version="0.1.6",
+    version="0.1.7",
     author="Dun and Bradstreet Inc.",
     author_email="devops@dandb.com",
     description='Python Module that parses salt returns stored in an external job cache and logs output',
@@ -30,5 +30,5 @@ setup(
     install_requires=get_required_modules('requirements.txt'),
     tests_require=get_required_modules('tests/requirements.txt'),
     test_suite="nose.collector",
-    long_description=read('README.md')
+    long_description=read('README.rst') + '\n\n' + read('CHANGES')
 )
