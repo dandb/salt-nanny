@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from argparse import ArgumentParser
-from saltnanny import SaltNanny
+from salt_nanny import SaltNanny
 
 
 def get_args():

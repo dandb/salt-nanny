@@ -28,8 +28,8 @@ class SaltReturnParser:
                 self.log.error('Error retrieving results for Minion:{0}: Exception:{1}'.format(minion, ve))
 
         if not completed_minions:
-            self.log.info('No highstates found in Job Cache, setting return_code_sum = 2')
-            return_code_sum = 2
+            self.log.info('No highstates found in Job Cache.')
+            return 2
 
         if len(completed_minions) != all_minions_count and return_code_sum == 0:
             self.log.info('Highstates available in Job Cache were successful, timed out waiting for others.')
