@@ -1,9 +1,10 @@
 Release Notes
 =============
-v0.1.1 First working version
-v0.1.2 Make changes in redis key structure for salt 2016 compatibility
-v0.1.3 Fix bug when reading the redis return
-v0.1.4 Add facility to read the last redis return without tracking a currently running highstate.
-v0.1.5 Fix formatting of log message.
-v0.1.6 Add salt-nanny command line utility to track returns from running highstate.
-v0.1.7 Update Documentation & improve command line utility
+v0.1.1 First working version\n
+v0.1.2 Make changes in redis key structure for salt 2016 compatibility\n
+v0.1.3 Fix bug when reading the redis return\n
+v0.1.4 Add facility to read the last redis return without tracking a currently running highstate.\n
+v0.1.5 Fix formatting of log message.\n
+v0.1.6 Add salt-nanny command line utility to track returns from running highstate.\n
+v0.1.7 Update Documentation & improve command line utility\n
+v0.1.9 Fixed bug to return exit code 2 if no returns are found.
