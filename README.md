@@ -14,6 +14,11 @@ salt-nanny localhost minion1 minion2 -p 6380 -x 20 -I 5 60 2
 This command tells salt-nanny to wait 5, 10, 20, 40 and 60 seconds between each retry initially and then 60s for
 subsequent retries. Attempt 20 times and then give up. Use port 6380 for redis.
 
+```
+salt-nanny localhost minion1 -r -j 20170905144844350779
+```
+This command tells salt-nanny to return results from minion minion1 that have higher JID than 20170905144844350779
+
 *Example Python code:*
 ```
 #!/usr/bin/env python
