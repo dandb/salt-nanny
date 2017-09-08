@@ -61,11 +61,14 @@ class SaltNanny:
                 break
         self.log.info(self.completed_minions)
         return self.parser.process_jids(self.completed_minions, len(self.minion_list))
-    
-    def parse_last_return(self):
+
+    def parse_last_return(self, earliest_jid=0):
         for minion in self.minion_list:
             latest_jid = self.cache_client.get_latest_jid(minion, self.fun)
-            if latest_jid != '0':
+            if int(latest_jid) < earliest_jid:
+                self.log.info("No highstates found in job cache for minion: {0} after: {1}".format(minion, earliest_jid))
+                return 1
+            else:
                 self.completed_minions[minion] = latest_jid
         self.log.info(self.completed_minions)
         return self.parser.process_jids(self.completed_minions, len(self.minion_list))

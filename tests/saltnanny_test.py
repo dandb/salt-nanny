@@ -69,6 +69,46 @@ class SaltNannyTest(unittest.TestCase):
         self.assertTrue(salt_nanny.parse_last_return() > 0)
 
     @patch('redis.Redis')
+    def test_parse_last_return_with_results(self, mock_redis):
+        fake_redis = FakeRedis()
+
+        # Create and initialize Salt Nanny
+        salt_nanny = SaltNanny(self.cache_config)
+        salt_nanny.cache_client.redis_instance = fake_redis
+        salt_nanny.initialize(['minion1'])
+        salt_nanny.min_interval = 1
+
+        with open('{0}/resources/highstate.json'.format(os.path.dirname(__file__)), 'r') as f:
+            json = f.read()
+
+        # Make Redis Returns available in fake redis
+        fake_redis.set('minion1:state.highstate', '6789')
+        fake_redis.set('minion1:6789', json)
+
+        # 6789 is higher than JID 6666 so the json will be fetched
+        self.assertTrue(salt_nanny.parse_last_return(6666) == 2)
+
+    @patch('redis.Redis')
+    def test_parse_last_return_with_no_results(self, mock_redis):
+        fake_redis = FakeRedis()
+
+        # Create and initialize Salt Nanny
+        salt_nanny = SaltNanny(self.cache_config)
+        salt_nanny.cache_client.redis_instance = fake_redis
+        salt_nanny.initialize(['minion1'])
+        salt_nanny.min_interval = 1
+
+        with open('{0}/resources/highstate.json'.format(os.path.dirname(__file__)), 'r') as f:
+            json = f.read()
+
+        # Make Redis Returns available in fake redis
+        fake_redis.set('minion1:state.highstate', '6789')
+        fake_redis.set('minion1:6789', json)
+
+        # 6789 is lower than JID 7777 so no results expected
+        self.assertTrue(salt_nanny.parse_last_return(7777) == 1)
+
+    @patch('redis.Redis')
     def test_track_custom_event_failures_no_failures(self, mock_redis):
         fake_redis = FakeRedis()
         fake_redis.set('custom_event_type', '["Random Event Log", "Success"]')
