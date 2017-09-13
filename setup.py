@@ -22,7 +22,7 @@ setup(
     description='Python Module that parses salt returns stored in an external job cache and logs output',
     license="GPLv3",
     keywords="Salt SaltStack Redis redis_return parse cache external",
-    url="https://github.com/dandb/saltnanny",
+    url="https://github.com/dandb/salt-nanny",
     packages=['saltnanny'],
     scripts=['salt-nanny'],
     include_package_data=True,
