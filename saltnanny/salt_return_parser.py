@@ -94,7 +94,13 @@ class SaltReturnParser:
 
     def highstate_failed(self, result):
         try:
-            possible_failures = ['"result": false', 'Data failed to compile:', 'Pillar failed to render with the following messages:']
+            possible_failures = [
+                '"result": false',
+                'Data failed to compile:',
+                'Pillar failed to render with the following messages:',
+                'Detected conflicting IDs',
+                'Cannot extend ID'
+            ]
             failures = [failure in result for failure in possible_failures]
             self.log.info(failures)
             if True not in failures:
