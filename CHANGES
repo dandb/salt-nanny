@@ -9,4 +9,5 @@ v0.1.6 Add salt-nanny command line utility to track returns from running highsta
 v0.1.7 Update Documentation & improve command line utility\n
 v0.1.9 Fixed bug to return exit code 2 if no returns are found.
 v0.2.0 Added new command line parameter(earliest_jid) to only return saltmaster results more recent than the passed jid
+v0.2.1 Updated list of potential_failures in salt_return_parser
 
