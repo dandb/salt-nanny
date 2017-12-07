@@ -1,0 +1,64 @@
+{
+  "fun_args": [],
+  "jid": "20160802115439359216",
+  "return": {
+    "service_|-sshd_|-sshd_|-running": {
+      "comment": "The service sshd is already running",
+      "name": "sshd",
+      "start_time": "11:55:04.421662",
+      "result": true,
+      "duration": 75.354,
+      "__run_num__": 118,
+      "changes": {}
+    },
+    "pkg_|-sendmail-packages-to-remove_|-exim_|-removed": {
+      "comment": "All specified packages are already absent",
+      "name": "exim",
+      "start_time": "11:55:03.935561",
+      "result": true,
+      "duration": 0.773,
+      "__run_num__": 104,
+      "changes": {}
+    },
+    "file_|-/etc/nsswitch.conf_|-/etc/nsswitch.conf_|-managed": {
+      "comment": "File /etc/nsswitch.conf is in the correct state",
+      "name": "/etc/nsswitch.conf",
+      "start_time": "11:54:46.700019",
+      "result": true,
+      "duration": 5.779,
+      "__run_num__": 13,
+      "changes": {}
+    },
+    "file_|-/etc/cron.daily/ntpdate.cron_|-/etc/cron.daily/ntpdate.cron_|-managed": {
+      "comment": "File /etc/cron.daily/ntpdate.cron is in the correct state",
+      "name": "/etc/cron.daily/ntpdate.cron",
+      "start_time": "11:55:03.768677",
+      "result": true,
+      "duration": 2.648,
+      "__run_num__": 85,
+      "changes": {}
+    },
+    "service_|-crond_|-crond_|-running": {
+      "comment": "The service crond is already running",
+      "name": "crond",
+      "start_time": "11:54:47.322022",
+      "result": true,
+      "duration": 28.982,
+      "__run_num__": 64,
+      "changes": {}
+    },
+    "file_|-/etc/pam.d/sshd_|-/etc/pam.d/sshd_|-managed": {
+      "comment": "Cannot extend ID",
+      "name": "/etc/pam.d/sshd",
+      "start_time": "11:55:04.497402",
+      "result": true,
+      "duration": 10.328,
+      "__run_num__": 119
+    }
+  },
+  "retcode": 2,
+  "success": false,
+  "fun": "state.highstate",
+  "id": "packer-dnbi",
+  "out": "highstate"
+}
