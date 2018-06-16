@@ -1,6 +1,0 @@
-#!/usr/bin/env python
-from saltnanny.salt_nanny_tool import tool_main
-
-if __name__ == '__main__':
-    return_code = tool_main()
-    exit(return_code)

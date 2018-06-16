@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 from argparse import ArgumentParser
-from salt_nanny import SaltNanny
+from .salt_nanny import SaltNanny
 
 
 def get_args():
@@ -25,5 +24,10 @@ def tool_main():
     salt_nanny.initialize(args.minions)
     return salt_nanny.parse_last_return(args.earliest_jid) if args.last_return else salt_nanny.track_returns(args.max_attempts)
 
-if __name__ == '__main__':
+
+def main():  # pragma: no cover
     exit(tool_main())
+
+
+if __name__ == '__main__':  # pragma: no cover
+    main()

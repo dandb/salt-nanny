@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+import abc
 import logging
 import redis
 
@@ -16,18 +16,24 @@ class SaltNannyClientFactory(object):
 
 
 class SaltNannyClient:
+    __metaclass__ = abc.ABCMeta
 
+    @abc.abstractmethod
     def get_latest_jid(self, minion, fun):
-        raise NotImplementedError
+        """ expected to return the most current jid for the specified minion, fun combination """
 
+    @abc.abstractmethod
     def get_return_by_jid(self, minion, jid):
-        raise NotImplementedError
+        """ expected to return the salt returner results for the specified minion,jid combination"""
 
+    @abc.abstractmethod
     def get_value_by_key(self, base_key):
-        raise NotImplementedError
+        """ expected to return the salt returner results associated with the key """
 
+    @abc.abstractmethod
     def exists(self, base_key):
-        raise NotImplementedError
+        """ expected to return true if the key exists, false otherwise """
+
 
 class SaltRedisClient(SaltNannyClient):
 
@@ -41,14 +47,20 @@ class SaltRedisClient(SaltNannyClient):
             self.log.error('Error while trying to connect to redis cache: {0}'.format(e))
             raise e
 
+    def _decode(self, value):
+        if value is None:
+            return value
+        return value.decode('utf-8')
+
     def get_latest_jid(self, minion, fun):
         cache_key = '{0}:{1}'.format(minion, fun)
         latest_jid = '0'
         try:
-            if self.redis_instance.type(cache_key) == 'list':
-                latest_jid = self.redis_instance.lindex(cache_key, 0)
-            elif self.redis_instance.type(cache_key) == 'string':
-                latest_jid = self.redis_instance.get(cache_key)
+            key_type = self._decode(self.redis_instance.type(cache_key))
+            if key_type == 'list':
+                latest_jid = self._decode(self.redis_instance.lindex(cache_key, 0))
+            elif key_type == 'string':
+                latest_jid = self._decode(self.redis_instance.get(cache_key))
         except KeyError:
             self.log.info('Latest jid not found. Defaulting to 0')
             pass
@@ -59,16 +71,16 @@ class SaltRedisClient(SaltNannyClient):
         cache_key = '{0}:{1}'.format(minion, jid)
         cache_key_salt_2016 = 'ret:{0}'.format(jid)
         if self.redis_instance.exists(cache_key):
-            return self.redis_instance.get(cache_key)
+            return self._decode(self.redis_instance.get(cache_key))
         elif self.redis_instance.exists(cache_key_salt_2016):
-            return self.redis_instance.hget(cache_key_salt_2016, minion)
+            return self._decode(self.redis_instance.hget(cache_key_salt_2016, minion))
         else:
             msg = 'Return info for JID:{0} does not exist'.format(jid)
             self.log.error(msg)
             raise ValueError(msg)
 
     def get_value_by_key(self, base_key):
-        return self.redis_instance.get(base_key)
+        return self._decode(self.redis_instance.get(base_key))
 
     def exists(self, base_key):
         return self.redis_instance.exists(base_key)

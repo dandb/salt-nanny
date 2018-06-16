@@ -1,6 +1,5 @@
 #Include Requirements files
 include *.txt
 include tests/*.txt
-include README.md
 include README.rst
 include CHANGES
