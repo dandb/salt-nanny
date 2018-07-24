@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-
 import logging
 import math
 import os
 from time import sleep
 
 
-from salt_return_parser import SaltReturnParser
-from salt_nanny_client import SaltNannyClientFactory
+from .salt_return_parser import SaltReturnParser
+from .salt_nanny_client import SaltNannyClientFactory
 
 
 class SaltNanny:
@@ -39,8 +37,8 @@ class SaltNanny:
     def track_returns(self, max_attempts=17):
         pending_minion_list = list(self.minion_list)
 
-        for i in xrange(0, max_attempts):
-            pending_minion_list = [minion for minion in pending_minion_list if minion not in self.completed_minions.keys()]
+        for i in range(0, max_attempts):
+            pending_minion_list = [minion for minion in pending_minion_list if minion not in list(self.completed_minions.keys())]
 
             if pending_minion_list:
                 wait_time = self.get_wait_time(i)
@@ -57,7 +55,7 @@ class SaltNanny:
                         self.completed_minions[minion] = latest_jid
             else:
                 self.log.info('Results available in External Job Cache for all minions: {0}'
-                              .format(self.completed_minions.keys()))
+                              .format(list(self.completed_minions.keys())))
                 break
         self.log.info(self.completed_minions)
         return self.parser.process_jids(self.completed_minions, len(self.minion_list))
@@ -79,8 +77,10 @@ class SaltNanny:
             return self.max_interval
         return wait_interval
 
-    def track_custom_event_failures(self, event_key, failures, max_attempts=17, successes=[]):
-        for i in xrange(0, max_attempts):
+    def track_custom_event_failures(self, event_key, failures, max_attempts=17, successes=None):
+        if successes is None:
+            successes = []
+        for i in range(0, max_attempts):
             wait_time = self.get_wait_time(i)
             self.log.info('Sleeping for {0} seconds...'.format(wait_time))
             sleep(wait_time)
@@ -106,10 +106,3 @@ class SaltNanny:
             ch = logging.FileHandler(target)
             ch.setFormatter(formatter)
             self.log.addHandler(ch)
-
-
-if __name__ == '__main__':
-    cache_config = {'type': 'redis', 'host': '127.0.0.1', 'port': 6379, 'db': '0'}
-    salt_nanny = SaltNanny(cache_config)
-    salt_nanny.initialize(['minion1'])
-    result = salt_nanny.track_returns(15)

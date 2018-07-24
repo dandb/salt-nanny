@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import re
 import logging
 import json
@@ -19,12 +17,12 @@ class SaltReturnParser:
 
     def process_jids(self, completed_minions, all_minions_count):
         return_code_sum = 0
-        for minion, jid in completed_minions.iteritems():
+        for minion, jid in list(completed_minions.items()):
             try:
                 return_info, return_code = self.get_return_info(minion, jid)
                 return_code_sum += return_code
                 self.log.info(json.dumps(return_info, indent=1))
-            except ValueError as ve:
+            except ValueError as ve:  # pragma: no cover
                 self.log.error('Error retrieving results for Minion:{0}: Exception:{1}'.format(minion, ve))
 
         if not completed_minions:
@@ -106,7 +104,7 @@ class SaltReturnParser:
             if True not in failures:
                 failures = self.check_regex_failure(failures, result)
             return True in failures
-        except:
+        except:  # pragma: no cover
             self.log.error('Error finding if there was a failure in the result:\n {0}'.format(result))
             return True
 

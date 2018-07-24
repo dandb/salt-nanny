@@ -1,11 +1,15 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
+  - "3.6"
+
 install:
-  - pip install -r tests/requirements.txt
   - pip install coveralls
+  - pip install tox-travis
+  - pip install tox==2.6.0
+
 script:
-  - coverage run --source . setup.py nosetests
+  - tox
+
 after_success:
-    coveralls
+  - if [ "$TRAVIS_PYTHON_VERSION" == "2.7" ]; then coveralls; fi
