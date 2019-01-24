@@ -54,6 +54,14 @@
       "result": true,
       "duration": 10.328,
       "__run_num__": 119
+    },
+    "file_|-/etc/pam.d/sshd_|-/etc/pam.d/sshd_|-managed": {
+      "comment": "not available on the salt master or through a configured fileserver",
+      "name": "/etc/pam.d/sshd",
+      "start_time": "11:56:04.497402",
+      "result": true,
+      "duration": 10.328,
+      "__run_num__": 119
     }
   },
   "retcode": 2,
